@@ -22,26 +22,32 @@ observer.observe(document.querySelector('header'), {
  * see: https://github.com/sysleaf/js-auto-hide-header-onscroll/blob/master/script.js
  */
 
-const classNames = {
-  show: 'header--show',
-  hide: 'header--hide',
-  top0: 'header--top-0',
-  bottom0: 'header--bottom-0'
+let stats = {
+  preScrollY: 0,
+  curScrollY: 0,
+  isTicking: false,
+  headerElement: null
 }
+
+const getElement = (elem) => document.querySelector(elem)
+const getHeaderElem = () => getElement('header')
+
 
 
 function pin() {
-  if (eleHeader.classList.contains(classes.unpinned)) {
-    eleHeader.classList.remove(classes.unpinned);
-    eleHeader.classList.add(classes.pinned);
+  let elem = getHeaderElem()
+  if (elem.classList.contains('header--hidden')) {
+    elem.classList.remove('header--hidden');
+    elem.classList.add('header--visible');
   }
 }
 
 
 function unpin() {
-  if (eleHeader.classList.contains(classes.pinned) || !eleHeader.classList.contains(classes.unpinned)) {
-    eleHeader.classList.remove(classes.pinned);
-    eleHeader.classList.add(classes.unpinned);
+  let elem = getHeaderElem()
+  if (elem.classList.contains('header--visible') || !elem.classList.contains('header--hidden')) {
+    elem.classList.remove('header--visible');
+    elem.classList.add('header--hidden');
   }
 }
 
