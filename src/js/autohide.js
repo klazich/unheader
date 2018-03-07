@@ -7,7 +7,7 @@ const show = (query) => {
   elem.classList.add('header--visible')
 }
 
-const addRemove()
+
 
 const RAF_cb = () => {
   let dy = y - yi  // Δy: change in y
