@@ -17,15 +17,35 @@ observer.observe(document.querySelector('header'), {
   attributeOldValue: true
 })
 
+/**
+ * Header pinning/unpinning
+ * see: https://github.com/sysleaf/js-auto-hide-header-onscroll/blob/master/script.js
+ */
 
-// construct an instance of Headroom, passing the element
-var headroom = new Headroom(document.querySelector("header"), {
-  "offset": 205,
-  "tolerance": 5,
-  "classes": {
-    "initial": "animated",
-    "pinned": "slideDown",
-    "unpinned": "slideUp"
+const classNames = {
+  show: 'header--show',
+  hide: 'header--hide',
+  top0: 'header--top-0',
+  bottom0: 'header--bottom-0'
+}
+
+
+function pin() {
+  if (eleHeader.classList.contains(classes.unpinned)) {
+    eleHeader.classList.remove(classes.unpinned);
+    eleHeader.classList.add(classes.pinned);
   }
-});
-headroom.init();
+}
+
+
+function unpin() {
+  if (eleHeader.classList.contains(classes.pinned) || !eleHeader.classList.contains(classes.unpinned)) {
+    eleHeader.classList.remove(classes.pinned);
+    eleHeader.classList.add(classes.unpinned);
+  }
+}
+
+
+window.onload = function () {
+
+}

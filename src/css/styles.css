@@ -1,1 +1,14 @@
 @import 'tachyons';
+
+.header--hidden {
+  transform: translateY(-65px);
+}
+
+.header--visible {
+  transform: translateY(0);
+}
+
+header {
+  will-change: transform;
+  transition: transform 0.25s ease-in-out;
+}
