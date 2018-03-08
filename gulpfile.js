@@ -8,6 +8,8 @@ const Browser = require('browser-sync')
 // create browser-sync object
 const browser = Browser.create()
 
+const buildDir = process.env.NODE_ENV === 'development' ? 'dist' : 'docs'
+
 /**
  * Gulp tasks
  * Use npm or yarn to run tasks:      
@@ -15,7 +17,7 @@ const browser = Browser.create()
  *   $ yarn run start
  */
 
-const clean = () => del(['dist'])
+const clean = () => del([buildDir])
 const build = gulp.series(clean, gulp.parallel(content, scripts, styles))
 const start = gulp.series(build, gulp.parallel(server, watchers))
 
@@ -45,7 +47,7 @@ function watchers() {
 
 function content() {
   return gulp.src('src/index.html')
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest(buildDir))
 }
 
 /**
@@ -54,7 +56,7 @@ function content() {
 
 function scripts() {
   return gulp.src('src/js/main.js')
-    .pipe(gulp.dest('dist/js'))
+    .pipe(gulp.dest(resolve(buildDir, 'js')))
 }
 
 /**
@@ -70,7 +72,7 @@ function styles() {
   ]
   return gulp.src('src/css/styles.css')
     .pipe(postcss(processors))
-    .pipe(gulp.dest('dist/css'))
+    .pipe(gulp.dest(resolve(buildDir, 'css')))
     .pipe(browser.stream())  // inject css changes w/o reload
 }
 
