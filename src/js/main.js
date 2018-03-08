@@ -1,57 +1,94 @@
-const getHeaderClassName = () => document.querySelector('header').className
-const updateDisplay = (text) => document.getElementById('displayHeaderClass').textContent = text
+/**
+ * Header pinning/unpinning
+ */
 
-updateDisplay(getHeaderClassName())
+let yOld = 0
+let y = 0
+let queued = false
 
-const callback = (mutationList) => {
-  mutationList.forEach(mutation => {
-    console.log('header class change', mutation)
-    updateDisplay(getHeaderClassName())
-  })
+const pin = (query) => {
+  let elem = document.querySelector(query)
+  elem.classList.remove('header--unpinned')
+  elem.classList.add('header--pinned')
 }
 
-let observer = new MutationObserver(callback)
+const unpin = (query) => {
+  let elem = document.querySelector(query)
+  elem.classList.remove('header--pinned')
+  elem.classList.add('header--unpinned')
+}
+
+const update = () => {
+  let dy = y - yOld           // Δy is change in y
+
+  dy > 0 ? unpin('header')    // (Δy > 0) scroll movement down -> hide header
+    : dy < 0 ? pin('header')  // (Δy < 0) scroll movement up   -> show header
+      : null                  // (Δy = 0) no scroll movement   -> do nothing
+
+  yOld = y
+  queued = false
+}
+
+const onScroll_cb = () => {
+  y = window.scrollY
+  if (!queued) requestAnimationFrame(update)
+  queued = true
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+
+const Updater = id => text => document.getElementById(id).textContent = text
+
+const updateShowClasses = Updater('showClasses')
+const updateShowCount = Updater('showCount')
+
+const getHeaderClasses = () => document.querySelector('header').className
+
+/**
+ * Class mutation observer
+ */
+
+let observer = new MutationObserver(mutationList => {
+    mutationList.forEach(mutation => updateShowClasses(getHeaderClasses()))
+  })
+
 observer.observe(document.querySelector('header'), {
-  attributes: true,
-  attributeFilter: ['class'],
-  attributeOldValue: true
+  attributes: true,             // watch targets attributes
+  attributeFilter: ['class'],   // only want class attribute for mutation
+  attributeOldValue: true       // return old value too
 })
 
 /**
- * Header pinning/unpinning
- * see: https://github.com/sysleaf/js-auto-hide-header-onscroll/blob/master/script.js
+ * Counter closure
  */
 
-let stats = {
-  preScrollY: 0,
-  curScrollY: 0,
-  isTicking: false,
-  headerElement: null
-}
-
-const getElement = (elem) => document.querySelector(elem)
-const getHeaderElem = () => getElement('header')
-
-
-
-function pin() {
-  let elem = getHeaderElem()
-  if (elem.classList.contains('header--hidden')) {
-    elem.classList.remove('header--hidden');
-    elem.classList.add('header--visible');
+const Counter = function (init) {
+  let privateCounter = init || 0
+  const changeBy = (val) => privateCounter += val
+  return {
+    inc: () => changeBy(1),
+    dec: () => changeBy(-1),
+    val: () => changeBy(0)
   }
 }
 
-
-function unpin() {
-  let elem = getHeaderElem()
-  if (elem.classList.contains('header--visible') || !elem.classList.contains('header--hidden')) {
-    elem.classList.remove('header--visible');
-    elem.classList.add('header--hidden');
-  }
-}
-
+/**
+ * On load...
+ */
 
 window.onload = function () {
+  const count = Counter()
+
+  updateShowCount(count.val())
+  updateShowClasses(getHeaderClasses())
+
+  document.addEventListener('scroll', () => {
+    updateShowCount(count.inc())  // increment count
+
+    y = window.scrollY
+    if (!queued) requestAnimationFrame(update)
+    queued = true
+
+  }, false)
 
 }

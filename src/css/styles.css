@@ -1,10 +1,10 @@
 @import 'tachyons';
 
-.header--hidden {
-  transform: translateY(-65px);
+.header--unpinned {
+  transform: translateY(-100%);
 }
 
-.header--visible {
+.header--pinned {
   transform: translateY(0);
 }
 
