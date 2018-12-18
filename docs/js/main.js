@@ -7,7 +7,7 @@ let y = 0
 let queued = false
 
 const pin = () => {
-  let elem = document.querySelector('header')
+  const elem = document.querySelector('header')
   // switch from unpinned to pinned
   elem.classList.remove('header--unpinned')
   elem.classList.add('header--pinned')
@@ -15,14 +15,14 @@ const pin = () => {
 
 const unpin = () => {
   // switch from pinned to unpinned
-  let elem = document.querySelector('header')
+  const elem = document.querySelector('header')
   elem.classList.remove('header--pinned')
   elem.classList.add('header--unpinned')
 }
 
 const update = () => {
   // 'Δy' or 'dy' or 'delta y' = change in y
-  let dy = y - yOld
+  const dy = y - yOld
 
   // Δy > 0  scroll movement down -> hide (unpin) header
   // Δy < 0  scroll movement up   -> show (pin) header
@@ -48,7 +48,7 @@ const updateShowCountText = Updater('showCount')
 
 const getHeaderClasses = () => document.querySelector('header').className
 
-let observer = new MutationObserver(mutationList => {
+const observer = new MutationObserver(mutationList => {
   mutationList.forEach(mutation => updateShowClassesText(getHeaderClasses()))
 })
 
