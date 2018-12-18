@@ -8,11 +8,13 @@ let queued = false
 
 const pin = () => {
   let elem = document.querySelector('header')
+  // switch from unpinned to pinned
   elem.classList.remove('header--unpinned')
   elem.classList.add('header--pinned')
 }
 
 const unpin = () => {
+  // switch from pinned to unpinned
   let elem = document.querySelector('header')
   elem.classList.remove('header--pinned')
   elem.classList.add('header--unpinned')
@@ -22,53 +24,39 @@ const update = () => {
   // 'Δy' or 'dy' or 'delta y' = change in y
   let dy = y - yOld
 
-  // Δy > 0   scroll movement down -> hide (unpin) header
-  // Δy < 0   scroll movement up   -> show (pin) header
-  // Δy = 0   no scroll movement   -> do nothing
+  // Δy > 0  scroll movement down -> hide (unpin) header
+  // Δy < 0  scroll movement up   -> show (pin) header
+  // Δy = 0  no scroll movement   -> do nothing
   dy > 0 ? unpin() : dy < 0 ? pin() : null
 
   yOld = y // the new become the old
 
-  // once the 'update' function runs it is no longer queued
+  // once this function executes it is no longer queued
   queued = false
 }
 
-const onScroll_cb = () => {
-  // grab scroll position
-  y = window.scrollY
-  // if not already queued, request 'update' to run before next repaint
-  if (!queued) requestAnimationFrame(update)
-  // the 'update' callback will always be queued at this point
-  queued = true
-}
-
-/* ---------------------------------------------------------------------------------------------- */
-
-// change text content of element with with id
+// change the text content of an element given the element's id
 const Updater = id => text => (document.getElementById(id).textContent = text)
-
 const updateShowClassesText = Updater('showClasses')
 const updateShowCountText = Updater('showCount')
 
-const getHeaderClasses = () => document.querySelector('header').className
-
 /**
- * Class mutation observer
+ * Element class mutation observer
+ * - this updates the element #showClasses when the header element
+ *   mutates (pinned/unpinned)
  */
 
-const mutationObserverCallback = mutationList => {
+const getHeaderClasses = () => document.querySelector('header').className
+
+let observer = new MutationObserver(mutationList => {
   mutationList.forEach(mutation => updateShowClassesText(getHeaderClasses()))
-}
+})
 
-let observer = new MutationObserver(mutationObserverCallback)
-
-const observeConfig = {
+observer.observe(document.querySelector('header'), {
   attributes: true, // watch targets attributes
   attributeFilter: ['class'], // only want class attribute for mutation
   attributeOldValue: true, // return old value too
-}
-
-observer.observe(document.querySelector('header'), observeConfig)
+})
 
 /**
  * Counter closure
@@ -99,12 +87,9 @@ window.onload = function() {
     () => {
       updateShowCountText(count.inc()) // increment count
 
-      // grab scroll position
-      y = window.scrollY
-      // if not already queued, request 'update' to run before next repaint
-      if (!queued) requestAnimationFrame(update)
-      // the 'update' callback will always be queued at this point
-      queued = true
+      y = window.scrollY // grab scroll position
+      if (!queued) requestAnimationFrame(update) // if not already queued, request 'update' to run before next repaint
+      queued = true // the 'update' callback will always be queued at this point
     },
     false
   )
