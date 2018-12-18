@@ -12,7 +12,7 @@ const buildDir = process.env.NODE_ENV === 'development' ? 'dist' : 'docs'
 
 /**
  * Gulp tasks
- * Use npm or yarn to run tasks:      
+ * Use npm or yarn to run tasks:
  *   $ npm run start
  *   $ yarn run start
  */
@@ -29,7 +29,7 @@ module.exports = { build, start }
 
 function server() {
   browser.init({
-    server: { baseDir: 'dist' }
+    server: { baseDir: 'dist' },
   })
 }
 
@@ -46,8 +46,7 @@ function watchers() {
  */
 
 function content() {
-  return gulp.src('src/index.html')
-    .pipe(gulp.dest(buildDir))
+  return gulp.src('src/index.html').pipe(gulp.dest(buildDir))
 }
 
 /**
@@ -55,8 +54,7 @@ function content() {
  */
 
 function scripts() {
-  return gulp.src('src/js/main.js')
-    .pipe(gulp.dest(resolve(buildDir, 'js')))
+  return gulp.src('src/js/main.js').pipe(gulp.dest(resolve(buildDir, 'js')))
 }
 
 /**
@@ -67,14 +65,12 @@ function styles() {
     require('postcss-import'),
     require('immutable-css'),
     require('postcss-cssnext'),
-    require('postcss-reporter')({clearMessages: true, throwError: false}),
-    require('postcss-browser-reporter')
+    require('postcss-reporter')({ clearMessages: true, throwError: false }),
+    require('postcss-browser-reporter'),
   ]
-  return gulp.src('src/css/styles.css')
+  return gulp
+    .src('src/css/styles.css')
     .pipe(postcss(processors))
     .pipe(gulp.dest(resolve(buildDir, 'css')))
-    .pipe(browser.stream())  // inject css changes w/o reload
+    .pipe(browser.stream()) // inject css changes w/o reload
 }
-
-
-
